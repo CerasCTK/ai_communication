@@ -7,7 +7,7 @@ python_version = "3.14"
 ignore_missing_imports = true
 warn_unused_ignores = true
 warn_return_any = true
-disallow_untypted_defs = true
+disallow_untyped_defs = true
 plugins = [
     "mypy_django_plugin.main"
 ]
@@ -21,16 +21,5 @@ line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
 combine_as_imports = true
-
-[tool.isort.sections]
-django = ["django"]
-
-[tool.isort.section_order]
-sections = [
-    "FUTURE",
-    "STDLIB",
-    "DJANGO",
-    "THIRDPARTY",
-    "FIRSTPARTY",
-    "LOCALFOLDER",
-]
+known_django = ["django"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
