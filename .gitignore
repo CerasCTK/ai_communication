@@ -8,5 +8,6 @@ venv/
 
 # Editor
 .vscode/
+.devcontainer/
 .idea/
 .DS_Store
