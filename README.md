@@ -95,7 +95,7 @@ docker compose up -d
 
 ## Commit Convention
 
-We follow [Conventional Commits](./commit-convention.md) for clean Git history.
+We follow [Conventional Commits](./COMMIT_CONVENTION.md) for clean Git history.
 
 
 ## 📄 License
