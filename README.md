@@ -29,8 +29,8 @@ The goal of this project is to deliver a more natural, engaging, and effective l
 - Engage in real-life conversations through text or voice.
 - Supports contextual scenarios (market, airport, restaurant, and more).
 
-###  2. Real-time STT (Julius Integration)
-- On-device, low-latency speech recognition using **Julius STT**.
+###  2. Real-time Speech-to-Text (STT)
+- Supports real-time, low-latency speech recognition.
 - Users can speak naturally and receive instant AI responses.
 
 ###  3. Grammar & Vocabulary Feedback
