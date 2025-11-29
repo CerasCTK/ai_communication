@@ -10,8 +10,7 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Commit-Convention](#commit-convention)
-- [License](#license)
-- [Team-Members](#team-members)
+- [License](#-license)
 
 
 
@@ -51,28 +50,22 @@ The goal of this project is to deliver a more natural, engaging, and effective l
 
 ##  Requirements
 
+#### **Hardware Requirement**
+Minimum recommended hardware to run the project smoothly
+- CPU: Dual-core processor
+- RAM: 4GB RAM or more
+- Storage: 2GB free disk space
+- Microphone: medium quality requirements.
+- Camera: medium quality requirements.
+- Internet Connection: Stable connection for realtime AI responses
+
 #### **System / Tools Needed**
 - Python **3.10+**
 - Git
-- Docker (optional)
+- Docker
 - OpenAI API Key
-- WebSocket support for real-time STT
-- Julius STT Engine (for local speech recognition)
-
-#### **Environment Variables**
-Create a `.env` file at the project root:
-
-Sample initialization:
-Open-AI key
-```sh
-OPENAI_API_KEY=your_api_key_here
-BASE_URL=https://aiportalapi.stu-platform.live/jpe
-client = openai.OpenAI(
-    base_url=os.getenv("BASE_URL"),
-    api_key=os.getenv("OPENAI_API_KEY")
-)
-```
-
+- WebSocket
+- STT Engine 
 
 
 ## Installation
@@ -88,23 +81,6 @@ cd ai_communication
 pip install -r requirements.txt
 ```
 
-#### Install Julius (Speech-to-Text Engine)
-
-Ubuntu:
-
-```sh
-sudo apt install julius
-```
-
-macOS:
-```sh
-brew install julius
-```
-
-Windows:
-
-Download from Julius official website and add to PATH.
-
 #### Install WebSocket library
 ```sh
 pip install websockets
@@ -117,43 +93,9 @@ docker compose up -d
 
 
 
-## 📝 Commit Convention
+## Commit Convention
 
-This project follows the Conventional Commits standard.
-
-Short commit
-```sh
-git commit -m "Add comment here"
-```
-Long commit format
-```sh
-<type>[Compoent]: <short description>
-
-[optional body]
-
-[optional footer]
-```
-
-Commit Types
-
-| **Type**             | **Meaning**                                                      |
-| -------------------- | ---------------------------------------------------------------- |
-| **bug**              | Something isn't working                                          |
-| **documentation**    | Improvements or additions to documentation                       |
-| **duplicate**        | This issue or pull request already exists                        |
-| **enhancement**      | New feature or request                                           |
-| **good first issue** | Good for newcomers                                               |
-| **help wanted**      | Extra attention is needed                                        |
-| **invalid**          | This doesn't seem right                                          |
-| **question**         | Further information is requested                                 |
-| **study**            | For issues related to research or learning before implementation |
-| **wontfix**          | This will not be worked on                                       |
-
-Compoent Types
-
-| **Compoent:** **Julius**, **Websocket**, **etc**         |
-| -------------------- |
-
+We follow [Conventional Commits](./commit-convention.md) for clean Git history.
 
 
 ## 📄 License
@@ -161,17 +103,6 @@ Compoent Types
 
 This project is licensed under the MIT License.
 
-You are free to use, modify, and distribute the project under its terms.
-
-
-
-##  Team Members
-| Name          | Role                           |
-| ------------- | ------------------------------ |
-| **KhaiCT1**   | Leader – AI Engineer / Backend |
-| **HaoNV35**   | Frontend Engineer              |
-| **DuyLM10**   | Frontend Engineer              |
-| **KienNT167** | Backend Engineer               |
-| **AnhPD54**   | Backend Engineer               |
+See the [LICENSE](./LICENSE) file for details.
 
 ---
