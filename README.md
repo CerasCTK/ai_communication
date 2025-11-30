@@ -33,24 +33,26 @@ The goal of this project is to deliver a more natural, engaging, and effective l
 - Supports real-time, low-latency speech recognition.
 - Users can speak naturally and receive instant AI responses.
 
-###  3. Grammar & Vocabulary Feedback
-- Real-time grammar correction.
-- Suggestions for more natural and accurate vocabulary usage.
-
-###  4. Personalized Exercises
-- Automatically generated exercises based on user proficiency.
-- AI adapts to the user’s learning progress over time.
-
-###  5. OpenAI API Integration
+###  3. OpenAI API Integration
 - **GPT-4o** for intelligent, context-aware conversations.
-- Whisper or streaming STT as additional options.
 - Ensures high-quality responses and analysis.
 
+
+## Roadmap
+
+- [x] Real-time Speech-to-Text
+- [x] Applying AI
+- [ ] Simple UI
+- [ ] Code Websocket(django)
+- [ ] Grammar & Vocabulary Feedback Feature
+- [ ] Personalized Exercises Feature
+
+See the [open issues](https://github.com/CerasCTK/ai_communication/issues) for a full list of proposed features (and known issues).
 
 
 ##  Requirements
 
-#### **Hardware Requirement**
+### **Hardware Requirement**
 Minimum recommended hardware to run the project smoothly
 - CPU: Dual-core processor
 - RAM: 4GB RAM or more
@@ -59,43 +61,36 @@ Minimum recommended hardware to run the project smoothly
 - Camera: medium quality requirements.
 - Internet Connection: Stable connection for realtime AI responses
 
-#### **System / Tools Needed**
+### **System / Tools Needed**
 - Python **3.10+**
 - Git
 - Docker
 - OpenAI API Key
 - WebSocket
-- STT Engine 
+- Speech-to-Text Engine 
 
 
 ## Installation
-#### 1. Clone the repository
+
+### 1. Install Docker
+Follow the [Docker_Guide](https://docs.docker.com/get-started/get-docker/) to install correctly with the different os.
+
+### 2. Clone the repository
 ```sh
 git clone https://github.com/CerasCTK/ai_communication.git
 cd ai_communication
 ```
 
-#### 2. Install dependencies
-#### Python dependencies
-```sh
-pip install -r requirements.txt
-```
+### 3. Run via Docker
+**Note:** Make sure that[Dockerfile](https://github.com/CerasCTK/ai_communication/blob/main/Dockerfile), [requirements](https://github.com/CerasCTK/ai_communication/blob/main/requirements.txt) and [docker-compose.yml](https://github.com/CerasCTK/ai_communication/blob/main/docker-compose.yml) files has been downloaded. Then:
 
-#### Install WebSocket library
-```sh
-pip install websockets
-```
-
-#### 3. Run via Docker (optional)
 ```sh
 docker compose up -d
 ```
 
-
-
 ## Commit Convention
 
-We follow [Conventional Commits](./COMMIT_CONVENTION.md) for clean Git history.
+We follow the [COMMIT_CONVENTION](./COMMIT_CONVENTION.md) guideline to keep Git history clean and consistent.
 
 
 ## 📄 License
