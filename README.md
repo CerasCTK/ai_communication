@@ -4,18 +4,18 @@
 
 ---
 
-##  Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Commit-Convention](#commit-convention)
-- [License](#-license)
+## Table of Contents
+&nbsp;**1.** [Overview](#overview)  
+&nbsp;**2.** [Features](#features)  
+&nbsp;**3.** [Requirements](#requirements)  
+&nbsp;**4.** [Installation](#installation)  
+&nbsp;**5.** [Commit Convention](#commit-convention)  
+&nbsp;**6.** [License](#-license)  
 
 
 
 ##  Overview
-**Ai Communication** leverages AI technology to support multi-language learning through natural, interactive conversations.  
+**AI Communication** leverages AI technology to support multi-language learning through natural, interactive conversations.  
 Users can communicate with the AI in **text or voice**, receiving real-time feedback and corrections.  
 The system also provides **personalized learning recommendations** based on AI assessments to enhance overall progress.
 
@@ -40,8 +40,8 @@ The goal of this project is to deliver a more natural, engaging, and effective l
 
 ## Roadmap
 
-- [x] Real-time Speech-to-Text
-- [x] Applying AI
+- [ ] Real-time Speech-to-Text
+- [ ] Applying AI
 - [ ] Simple UI
 - [ ] Code Websocket(django)
 - [ ] Grammar & Vocabulary Feedback Feature
@@ -58,11 +58,10 @@ Minimum recommended hardware to run the project smoothly
 - RAM: 4GB RAM or more
 - Storage: 2GB free disk space
 - Microphone: medium quality requirements.
-- Camera: medium quality requirements.
 - Internet Connection: Stable connection for realtime AI responses
-
-### **System / Tools Needed**
-- Python **3.10+**
+<!-- Camera: medium quality requirements. -->
+### **Prerequisites**
+- Python **3.12+**
 - Git
 - Docker
 - OpenAI API Key
@@ -73,7 +72,7 @@ Minimum recommended hardware to run the project smoothly
 ## Installation
 
 ### 1. Install Docker
-Follow the [Docker_Guide](https://docs.docker.com/get-started/get-docker/) to install correctly with the different os.
+Follow the [Docker_Guide](https://docs.docker.com/get-started/get-docker/) to install correctly with the different OS.
 
 ### 2. Clone the repository
 ```sh
@@ -81,9 +80,7 @@ git clone https://github.com/CerasCTK/ai_communication.git
 cd ai_communication
 ```
 
-### 3. Run via Docker
-**Note:** Make sure that[Dockerfile](https://github.com/CerasCTK/ai_communication/blob/main/Dockerfile), [requirements](https://github.com/CerasCTK/ai_communication/blob/main/requirements.txt) and [docker-compose.yml](https://github.com/CerasCTK/ai_communication/blob/main/docker-compose.yml) files has been downloaded. Then:
-
+### 3. Run web app
 ```sh
 docker compose up -d
 ```
