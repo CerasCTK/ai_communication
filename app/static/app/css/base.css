@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    width: 100%;
+
+    padding: 0 var(--space-xl);
+
+    background: var(--color-primary);
+}
+
+.main-container {
+    flex: 1;
+
+    padding: 0 var(--space-xl);
+
+    width: 100%;
+    max-width: 960px;
+}
+
+footer {
+    width: 100%;
+
+    text-align: center;
+
+    padding: var(--space-sm) 0;
+
+    background: #333;
+
+    color: #ccc;
+}
