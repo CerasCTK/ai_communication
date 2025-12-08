@@ -17,3 +17,6 @@ env/
 .devcontainer/
 .idea/
 .DS_Store
+
+# Local database
+db.sqlite3
