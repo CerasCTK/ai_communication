@@ -21,3 +21,10 @@ def select_topic(request: HttpRequest) -> HttpResponse:
     Handle requests to the select topic page
     """
     return render(request, "app/select_topic.html")
+
+
+def speaking(request: HttpRequest) -> HttpResponse:
+    """
+    Handle requests to the speaking page
+    """
+    return render(request, "app/speaking.html")
