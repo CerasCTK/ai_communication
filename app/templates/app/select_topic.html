@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI Communication{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/select_topic.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="select-topic-container">
+    <div class="select-topic-header">
+        <h2>Choose a Topic to Practice</h2>
+        <p>Choose the topic you want to practice speaking</p>
+    </div>
+    <div class="select-topic-content">
+        <div class="left">
+            <div class="select-topic-item">
+                <h3>Daily Conversation</h3>
+                <p>Daily communication topics such as communication and ...</p>
+            </div>
+            <div class="select-topic-item">
+                <h3>Travel</h3>
+                <p>Practice speaking in travel situations</p>
+            </div>
+            <div class="select-topic-item">
+                <h3>Job Interview</h3>
+                <p>Practice real-time life interview dialogue with AI</p>
+            </div>
+            <div class="select-topic-item">
+                <h3>Technology</h3>
+                <p>Discuss the latest technology trends</p>
+            </div>
+            <div class="select-topic-item">
+                <h3>Free Talk</h3>
+                <p>Talk about any topic, you open first</p>
+            </div>
+            <div class="select-topic-item">
+                <h3>More topics comming soon</h3>
+                <p>More practical topcis in the future</p>
+            </div>
+        </div>
+        <div class="right">
+            <button>ICON here</button>
+            <p>Click to "Start practice"</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
