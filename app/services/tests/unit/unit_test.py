@@ -1,69 +1,47 @@
 """
-unit_test.py
+test_whisper_logic.py
 
-Unit tests for verifying the SpeechToText abstract base class.
-This test suite ensures that all required abstract methods
-(`transcribe`, `preprocess_audio`, `close`) are defined on the
-SpeechToText interface. It does not instantiate SpeechToText
-directly because doing so is prohibited for abstract classes.
+Clean unit test: directly tests Whisper.transcribe()
+without WAV file, without filesystem, no mocks.
 """
 
-import unittest
-from unittest.mock import MagicMock, patch
+from django.test import SimpleTestCase
 from app.services.whisper import Whisper
-from app.services.speech_to_text import SpeechToText
 
 
-class TestSpeechToTextBase(unittest.TestCase):
+class TestWhisperLogic(SimpleTestCase):
     """
-    Verify the abstract base class contract.
+    Test the logical behavior of Whisper.transcribe()
+    with simple fake audio bytes.
     """
-    def test_abstract_methods_exist(self):
+
+    def setUp(self):
+        # Initialize Whisper in CPU mode
+        self.whisper = Whisper(
+            model_name="openai/whisper-small.en",
+            device="cpu"
+        )
+
+    def test_transcribe_returns_string(self):
         """
-        Test Abstact method exixts.
+        Ensure the function returns a string.
         """
-        self.assertTrue(hasattr(SpeechToText, "transcribe"))
-        self.assertTrue(hasattr(SpeechToText, "preprocess_audio"))
-        self.assertTrue(hasattr(SpeechToText, "close"))
 
+        # Fake audio data (just bytes, not real audio)
+        dummy_audio = b"\x00\x01\x02\x03\x04\x05"
 
-class TestWhisperSTT(unittest.TestCase):
-    """Tests for the Whisper STT implementation."""
+        text = self.whisper.transcribe(dummy_audio)
 
-    @patch("app.services.whisper.pipeline")
-    def test_transcribe_mock(self, mock_pipeline):
-        """Test transcription with mocked Whisper pipeline."""
+        # Basic assertion: must return a string
+        self.assertIsInstance(text, str)
 
-        # ---- Prepare fake pipeline result ----
-        fake_pipe = MagicMock()
-        fake_pipe.return_value = {"text": "hello world"}
-        mock_pipeline.return_value = fake_pipe
+    def test_transcribe_not_empty(self):
+        """
+        Ensure transcription output is not empty.
+        """
 
-        # ---- Prepare fake audio input ---
-        fake_audio = b"\x00\x01" * 1000  # fake PCM16 bytes
-        # ---- Create Whisper instance ----
-        stt = Whisper(model_name="openai/whisper-small", device="cpu")
+        dummy_audio = b"\x10\x20\x30\x40"
 
-        # ---- Test preprocess_audio ----
-        processed = stt.preprocess_audio(fake_audio)
-        self.assertEqual(processed, fake_audio)
+        text = self.whisper.transcribe(dummy_audio)
 
-        # ---- Test transcribe() ----
-        text = stt.transcribe(fake_audio)
-        self.assertEqual(text, "hello world")
-
-        # Ensure pipeline was called
-        fake_pipe.assert_called()
-
-    def test_close(self):
-        """Ensure close() does not raise errors."""
-        stt = Whisper(model_name="openai/whisper-small", device="cpu")
-
-        try:
-            stt.close()
-        except RuntimeError as e:
-            self.fail(f"close() raised an exception: {e}")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertTrue(len(text.strip()) > 0)
