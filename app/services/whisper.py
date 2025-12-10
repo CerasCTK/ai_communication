@@ -6,18 +6,26 @@ Faster-Whisper, PyAudio, and WebRTC VAD for streaming transcription.
 """
 
 from typing import Generator
-from transformers import pipeline
+from typing import TypedDict, cast
+import numpy as np
 import pyaudio
 import webrtcvad
-import requests
-import numpy as np
+from transformers import pipeline
+
 from .speech_to_text import SpeechToText
 
-
-DJANGO_API = "http://127.0.0.1:8000/receive_transcript/"
 SAMPLE_RATE = 16000
-CHUNK_DURATION = 0.512  # seconds
-BUFFER_DURATION = 3  # seconds
+CHUNK_DURATION_IN_SECS = 0.512
+BUFFER_DURATION_IN_SECS = 3
+USE_CUDA = 0
+USE_CPU = -1
+
+
+class PipeResult(TypedDict):
+    """
+    Class Pipe Result for handle output when transcribe
+    """
+    text: str
 
 
 class Whisper(SpeechToText):
@@ -36,23 +44,30 @@ class Whisper(SpeechToText):
         - transcribe()
         - close()
     """
+    PREFIX = "openai/whisper-"
 
     def __init__(
         self,
-        model_name: str = "openai/whisper-medium.en",
+        model_name: str = "medium.en",
         device: str = "cuda",
     ):
         """Load HuggingFace Whisper pipeline and initialize components."""
+        if "/" in model_name:
+            self.model_name = model_name
+        else:
+            self.model_name = f"{self.PREFIX}{model_name}"
+        self.device = device
         self.pipe = pipeline(
             "automatic-speech-recognition",
-            model=model_name,
-            device=0 if device == "cuda" else -1
+            model=self.model_name,
+            device=USE_CUDA if device == "cuda" else USE_CPU,
         )
 
         self.vad = webrtcvad.Vad()
         self.vad.set_mode(2)
 
         self.audio = pyaudio.PyAudio()
+
         self.stream = self.audio.open(
             format=pyaudio.paInt16,
             channels=1,
@@ -72,11 +87,16 @@ class Whisper(SpeechToText):
         """Return raw PCM16 mono audio (already PCM16)."""
         return audio_bytes
 
-    def transcribe(self, audio_bytes) -> str:
-        """Transcribe with pipeline."""
-        audio_np = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32)/32768.0
+    def transcribe(self, audio_bytes: bytes) -> str:
+        """
+        Transcribe with pipeline.
+        """
+        audio_np = (
+            np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+        )
         result = self.pipe(audio_np)
-        return result["text"].strip()
+        typed = cast(PipeResult, result)
+        return typed["text"].strip()
 
     def close(self) -> None:
         """Release PyAudio streams and Whisper model."""
@@ -84,8 +104,8 @@ class Whisper(SpeechToText):
             self.stream.stop_stream()
             self.stream.close()
             self.audio.terminate()
-        except Exception:
-            pass
+        except (OSError, ValueError) as e:
+            print(f"[close] PyAudio error: {e}")
 
     # ============================================================
     # Utility methods
@@ -94,43 +114,28 @@ class Whisper(SpeechToText):
     def _record_small_chunk(self) -> bytes:
         """Record a small chunk of raw PCM audio."""
         frames = []
-        num_frames = int(SAMPLE_RATE * CHUNK_DURATION / 1024)
+        num_frames = int(SAMPLE_RATE * CHUNK_DURATION_IN_SECS / 1024)
         for _ in range(num_frames):
             data = self.stream.read(1024, exception_on_overflow=False)
             frames.append(data)
         return b"".join(frames)
 
     def _frame_generator(
-        self,
-        audio_bytes: bytes,
-        frame_duration_ms: int = 30
+        self, audio_bytes: bytes, frame_duration_ms: int = 30
     ) -> Generator[bytes, None, None]:
         """Generate frames of fixed duration for VAD."""
         bytes_per_frame = int(SAMPLE_RATE * 2 * frame_duration_ms / 1000)
         for i in range(0, len(audio_bytes), bytes_per_frame):
-            frame = audio_bytes[i:i + bytes_per_frame]
+            frame = audio_bytes[i : i + bytes_per_frame]
             if len(frame) == bytes_per_frame:
                 yield frame
 
-    def _is_speech(
-        self,
-        audio_bytes: bytes
-    ) -> bool:
+    def _is_speech(self, audio_bytes: bytes) -> bool:
         """Detect if chunk contains speech."""
         for frame in self._frame_generator(audio_bytes):
             if self.vad.is_speech(frame, SAMPLE_RATE):
                 return True
         return False
-
-    def _send_text(
-        self,
-        text: str
-    ) -> None:
-        """Send text transcript to Django."""
-        try:
-            requests.post(DJANGO_API, json={"text": text})
-        except Exception as e:
-            print("Send text error:", e)
 
     # ============================================================
     # Live streaming loop
@@ -152,14 +157,13 @@ class Whisper(SpeechToText):
                     self.buffer_audio += small_chunk
 
                 # Enough buffer?
-                if len(self.buffer_audio) >= SAMPLE_RATE * 2 * BUFFER_DURATION:
+                if len(self.buffer_audio) >= SAMPLE_RATE * 2 * BUFFER_DURATION_IN_SECS:
                     transcription = self.transcribe(self.buffer_audio)
                     self.buffer_audio = b""
 
                     if transcription:
                         print("\033[92m" + transcription + "\033[0m")
                         self.accumulated_transcription += transcription + " "
-                        # self._send_text(transcription)
 
         except KeyboardInterrupt:
             print("\n--- Transcription finished ---")
