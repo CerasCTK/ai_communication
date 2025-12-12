@@ -6,6 +6,9 @@ such as connection establishment, receiving messages, and handling disconnection
 """
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from app.services.whisper import Whisper
+
+whisper = Whisper(model_name="medium.en", device="cuda")
 
 
 class AudioConsumer(AsyncWebsocketConsumer):
@@ -27,6 +30,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
             - A confirmation message is sent to the client.
         """
         await self.accept()
+        print("Client connected")
         await self.send(text_data="Connected OK!")
 
     async def receive(
@@ -35,27 +39,22 @@ class AudioConsumer(AsyncWebsocketConsumer):
         """
         Handle incoming WebSocket messages.
 
-        Args:
-            text_data (str | None): Text data sent by client (if any).
-            bytes_data (bytes | None): Binary/audio data sent by client (if any).
-
-        Behavior:
-            - If text is received → send formatted echo response.
-            - If binary data is received → return the same bytes.
         """
-        if text_data is not None:
-            await self.send(text_data=f"Echo: {text_data}")
-        elif bytes_data is not None:
-            await self.send(bytes_data=bytes_data)
+        print("Haa")
+        # Receive PCM bytes from client
+        if bytes_data:
+            # Call your transcribe() directly
+        
+            text = whisper.transcribe(bytes_data)
+            print("Transcribed:", text)
+
+            # Send back to browser
+            await self.send(text_data=text)
 
     async def disconnect(self, code: int) -> None:
         """
         Handle WebSocket disconnection.
 
-        Args:
-            close_code (int): Code indicating why the connection was closed.
-
-        This method is executed when:
-            - Client disconnects.
-            - Server terminates the WebSocket.
         """
+        whisper.close()
+        print("Client disconnected")
