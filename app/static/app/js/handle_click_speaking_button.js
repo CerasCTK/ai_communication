@@ -1,4 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const speakingTopicElement = document.querySelector(".speaking-topic");
+  if (!speakingTopicElement) return;
+
+  const savedTopic = localStorage.getItem("selected_topic_desc");
+
+  if (savedTopic) {
+    speakingTopicElement.textContent = savedTopic;
+  } else {
+    speakingTopicElement.textContent = "No topic selected";
+  }
+
   const speakingButtonElement = document.getElementById("speakingButton");
 
   if (!speakingButtonElement) return;

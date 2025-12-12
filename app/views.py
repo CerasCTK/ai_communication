@@ -5,7 +5,7 @@ This module defines the HTTP endpoints used to render responses
 for the root page of the application
 """
 
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 

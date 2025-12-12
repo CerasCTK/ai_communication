@@ -3,3 +3,8 @@ daphne==4.2.1
 channels==4.0.0
 numpy==2.3.0
 sounddevice==0.4.6
+pyaudio==0.2.14
+torch==2.9.1
+webrtcvad==2.0.10
+soundfile==0.13.1
+transformers==4.57.3
