@@ -22,7 +22,7 @@ class TestWhisperRealTranscription(SimpleTestCase):
     - Compare transcription with expected text
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Path to real WAV file stored with your tests
         self.wav_path = os.path.join(os.path.dirname(__file__), "recorded.wav")
 
@@ -38,13 +38,13 @@ class TestWhisperRealTranscription(SimpleTestCase):
             device="cpu",  # use CPU for portability
         )
 
-    def _load_wav_bytes(self):
+    def _load_wav_bytes(self) -> bytes:
         """Return raw PCM bytes from WAV file."""
         with wave.open(self.wav_path, "rb") as wf:
             frames = wf.readframes(wf.getnframes())
         return frames
 
-    def test_real_audio_transcription(self):
+    def test_real_audio_transcription(self) -> None:
         """Full end-to-end test of Whisper on a real WAV."""
 
         audio_bytes = self._load_wav_bytes()

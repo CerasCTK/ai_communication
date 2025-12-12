@@ -16,11 +16,11 @@ class TestWhisperLogic(SimpleTestCase):
     with simple fake audio bytes.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Initialize Whisper in CPU mode
         self.whisper = Whisper(model_name="openai/whisper-small.en", device="cpu")
 
-    def test_transcribe_returns_string(self):
+    def test_transcribe_returns_string(self) -> None:
         """
         Ensure the function returns a string.
         """
@@ -33,7 +33,7 @@ class TestWhisperLogic(SimpleTestCase):
         # Basic assertion: must return a string
         self.assertIsInstance(text, str)
 
-    def test_transcribe_not_empty(self):
+    def test_transcribe_not_empty(self) -> None:
         """
         Ensure transcription output is not empty.
         """
