@@ -5,8 +5,8 @@ Concrete implementation of the SpeechToText abstract class using
 Faster-Whisper, PyAudio, and WebRTC VAD for streaming transcription.
 """
 
-from typing import Generator
-from typing import TypedDict, cast
+from typing import Generator, TypedDict, cast
+
 import numpy as np
 import pyaudio
 import webrtcvad
@@ -25,6 +25,7 @@ class PipeResult(TypedDict):
     """
     Class Pipe Result for handle output when transcribe
     """
+
     text: str
 
 
@@ -44,6 +45,7 @@ class Whisper(SpeechToText):
         - transcribe()
         - close()
     """
+
     PREFIX = "openai/whisper-"
 
     def __init__(

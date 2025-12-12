@@ -6,6 +6,7 @@ without WAV file, without filesystem, no mocks.
 """
 
 from django.test import SimpleTestCase
+
 from app.services.whisper import Whisper
 
 
@@ -17,10 +18,7 @@ class TestWhisperLogic(SimpleTestCase):
 
     def setUp(self):
         # Initialize Whisper in CPU mode
-        self.whisper = Whisper(
-            model_name="openai/whisper-small.en",
-            device="cpu"
-        )
+        self.whisper = Whisper(model_name="openai/whisper-small.en", device="cpu")
 
     def test_transcribe_returns_string(self):
         """
@@ -44,4 +42,5 @@ class TestWhisperLogic(SimpleTestCase):
 
         text = self.whisper.transcribe(dummy_audio)
 
+        self.assertTrue(len(text.strip()) > 0)
         self.assertTrue(len(text.strip()) > 0)

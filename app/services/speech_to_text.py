@@ -10,6 +10,7 @@ Subclasses must implement:
     - transcribe():        convert audio into text
     - close():             release resources when finished
 """
+
 from abc import ABC, abstractmethod
 
 

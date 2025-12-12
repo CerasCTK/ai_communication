@@ -24,21 +24,18 @@ class TestWhisperRealTranscription(SimpleTestCase):
 
     def setUp(self):
         # Path to real WAV file stored with your tests
-        self.wav_path = os.path.join(
-            os.path.dirname(__file__),
-            "recorded.wav"
-        )
+        self.wav_path = os.path.join(os.path.dirname(__file__), "recorded.wav")
 
         if not os.path.exists(self.wav_path):
             raise FileNotFoundError(f"Missing WAV file: {self.wav_path}")
 
         # Expected transcription text (you must define this)
-        self.expected_text = "hello world"   # ← change this
+        self.expected_text = "hello world"  # ← change this
 
         # Initialize real Whisper model
         self.whisper = Whisper(
             model_name="openai/whisper-medium.en",
-            device="cpu"     # use CPU for portability
+            device="cpu",  # use CPU for portability
         )
 
     def _load_wav_bytes(self):
@@ -63,5 +60,5 @@ class TestWhisperRealTranscription(SimpleTestCase):
         self.assertIn(
             self.expected_text.lower(),
             result.lower(),
-            msg=f"Expected '{self.expected_text}' in '{result}'"
+            msg=f"Expected '{self.expected_text}' in '{result}'",
         )
