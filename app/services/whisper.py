@@ -81,10 +81,6 @@ class Whisper(SpeechToText):
         self.buffer_audio = b""
         self.accumulated_transcription = ""
 
-    # ============================================================
-    # Abstract method implementations
-    # ============================================================
-
     def preprocess_audio(self, audio_bytes: bytes) -> bytes:
         """Return raw PCM16 mono audio (already PCM16)."""
         return audio_bytes
@@ -108,10 +104,6 @@ class Whisper(SpeechToText):
             self.audio.terminate()
         except (OSError, ValueError) as e:
             print(f"[close] PyAudio error: {e}")
-
-    # ============================================================
-    # Utility methods
-    # ============================================================
 
     def _record_small_chunk(self) -> bytes:
         """Record a small chunk of raw PCM audio."""
@@ -138,10 +130,6 @@ class Whisper(SpeechToText):
             if self.vad.is_speech(frame, SAMPLE_RATE):
                 return True
         return False
-
-    # ============================================================
-    # Live streaming loop
-    # ============================================================
 
     def start_streaming(self) -> None:
         """
