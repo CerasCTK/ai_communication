@@ -6,6 +6,7 @@ such as connection establishment, receiving messages, and handling disconnection
 """
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+
 from app.services.whisper import Whisper
 
 whisper = Whisper(model_name="medium.en", device="cuda")
@@ -44,7 +45,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
         # Receive PCM bytes from client
         if bytes_data:
             # Call your transcribe() directly
-        
+
             text = whisper.transcribe(bytes_data)
             print("Transcribed:", text)
 
@@ -57,4 +58,5 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
         """
         whisper.close()
+        print("Client disconnected")
         print("Client disconnected")

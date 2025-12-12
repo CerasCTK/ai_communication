@@ -23,6 +23,25 @@ document.addEventListener("DOMContentLoaded", () => {
   let mediaStream;
   let audioContext;
   let processor;
+  let source;
+
+  const resampleTo16k = (buffer, inputSampleRate) => {
+    const targetSampleRate = 16000;
+    const ratio = inputSampleRate / targetSampleRate;
+    const newLength = Math.round(buffer.length / ratio);
+    const resampled = new Float32Array(newLength);
+
+    for (let i = 0; i < newLength; i++) {
+      const index = i * ratio;
+      const left = Math.floor(index);
+      const right = Math.ceil(index);
+      const frac = index - left;
+      const leftVal = buffer[left] || 0;
+      const rightVal = buffer[right] || leftVal;
+      resampled[i] = leftVal + (rightVal - leftVal) * frac;
+    }
+    return resampled;
+  };
 
   speakingButtonElement.addEventListener("click", async () => {
     const isRecording = speakingButtonElement.classList.contains("recording");
@@ -31,50 +50,57 @@ document.addEventListener("DOMContentLoaded", () => {
       speakingButtonElement.classList.add("recording");
       speakingButtonElement.innerHTML = buttonContentWhenSpeaking;
 
-      // 1. Mở WebSocket
       ws = new WebSocket(WS_URL);
       ws.binaryType = "arraybuffer";
 
       ws.onopen = () => {
         console.log("✅ WebSocket connected");
 
-        // 2. Lấy micro
-        navigator.mediaDevices.getUserMedia({ audio: true })
-          .then(stream => {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then((stream) => {
             mediaStream = stream;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-            const source = audioContext.createMediaStreamSource(stream);
 
-            // 3. Tạo ScriptProcessorNode để lấy PCM
+            audioContext = new (window.AudioContext ||
+              window.webkitAudioContext)();
+            console.log("Mic samplerate = ", audioContext.sampleRate);
+
+            source = audioContext.createMediaStreamSource(stream);
+
             processor = audioContext.createScriptProcessor(1024, 1, 1);
+
             source.connect(processor);
             processor.connect(audioContext.destination);
 
-            processor.onaudioprocess = e => {
+            processor.onaudioprocess = (e) => {
+              if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
               const inputData = e.inputBuffer.getChannelData(0);
-              const buffer = new ArrayBuffer(inputData.length * 2);
+
+              const resampled = resampleTo16k(
+                inputData,
+                audioContext.sampleRate
+              );
+
+              const buffer = new ArrayBuffer(resampled.length * 2);
               const view = new DataView(buffer);
 
-              // Float32 -> Int16
-              for (let i = 0; i < inputData.length; i++) {
-                let s = Math.max(-1, Math.min(1, inputData[i]));
+              for (let i = 0; i < resampled.length; i++) {
+                let s = Math.max(-1, Math.min(1, resampled[i]));
                 view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
               }
 
-              if (ws.readyState === WebSocket.OPEN) {
-                console.log("Buffer: ", buffer);
-                ws.send(buffer);
-              }
+              console.log("Buffer: ", buffer);
+              ws.send(buffer);
             };
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Microphone error:", err);
           });
       };
 
       ws.onclose = () => console.log("🔒 WebSocket closed");
       ws.onerror = (err) => console.error("❌ WebSocket error:", err);
-
     } else {
       // Stop recording
       speakingButtonElement.classList.remove("recording");
@@ -87,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         audioContext.close();
       }
       if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream.getTracks().forEach((track) => track.stop());
       }
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.close();
