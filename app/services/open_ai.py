@@ -1,4 +1,4 @@
-import openai
+from openai import OpenAI
 from typing import Optional, List, Dict
 
 class AIUtilityClient: # Đổi tên Class cho phù hợp với chức năng mới
@@ -8,7 +8,7 @@ class AIUtilityClient: # Đổi tên Class cho phù hợp với chức năng m�
     """
 
     def __init__(self, api_key: str, base_url: str, deployment_name: str = "gpt-4o-mini"):
-        self.client = openai.OpenAI(
+        self.client = OpenAI(
             base_url=base_url,
             api_key=api_key
         )
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     MODEL_NAME = "gpt-4o-mini"
 
     # 2. Khởi tạo đối tượng (Instance)
-    my_ai_assistant = AIUtilityClient( # Dùng tên class đã đổi
+    my_ai_assistant = AIUtilityClient(
         api_key=API_KEY,
         base_url=BASE_URL,
         deployment_name=MODEL_NAME
