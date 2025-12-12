@@ -185,3 +185,79 @@ if __name__ == "__main__":
     print("\n=== TEST 3==")
     text3 = "When I travel to Europe, I often get confused at customs and immigration. I want to improve my English so I can ask for directions and talk to hotel staff more confidently."
     print(ai.generate_feedback(text3, "custom_topic"))
+
+"""
+
+=== TEST 1: Should match Technology ===
+[INFO] Extracting keyword via Function Calling...
+[INFO] Keyword extracted = ai
+Great observation! You’ve introduced a relevant topic that’s significant in today’s world. Here’s some friendly feedback to enhance your expression:
+
+- **Clarity and Specificity**: 
+  - Instead of saying "AI is growing very fast," you might specify how it's growing. For example, mentioning advancements in natural language processing or machine learning could add depth to your statement.
+  - Instead of "changing our future rapidly," consider specifying how AI is affecting particular industries (like healthcare, education, or transportation) or aspects of daily life.
+
+- **Engagement**:
+  - To captivate your audience further, you could pose a rhetorical question. For example, "How will these advancements in AI reshape the way we work and communicate?"
+
+- **Examples**:
+  - Incorporate specific examples of AI technologies (like autonomous vehicles, virtual assistants, or recommendation systems) to give your audience a clearer picture of what you mean by change.
+
+- **Enhance Vocabulary**:
+  - Instead of repeating "changing," consider synonyms like "transforming," "redefining," or "revolutionizing." This can make your writing more dynamic.
+
+- **Sentence Structure**:
+  - Consider combining your thoughts into a single, flowing sentence for a more polished effect. For example: "The rapid growth of AI, particularly in fields like healthcare and transportation, is not only reshaping industries but also redefining our daily interactions and future possibilities."
+
+By integrating these suggestions, you can create a more compelling and informative commentary on AI's rapid growth and its future implications. Keep it up!
+
+=== TEST 2: Should create Finance coach ===
+[INFO] Extracting keyword via Function Calling...
+[INFO] Keyword extracted = investment
+That’s a great decision! Investing and understanding compound interest are foundational to building wealth. Here are some detailed, friendly tips to help you along your investment journey:
+
+### Understanding Compound Interest:
+- **Definition**: Compound interest is the interest on a loan or deposit calculated based on both the initial principal and the accumulated interest from previous periods. 
+- **Importance**: The earlier you start investing and letting your interest compound, the more wealth you can accumulate over time.
+- **Formula**: Familiarize yourself with the compound interest formula:
+  \[ A = P (1 + r/n)^{nt} \]
+  Where:
+  - \( A \) = the future value of the investment/loan, including interest
+  - \( P \) = the principal investment amount (initial deposit)
+  - \( r \) = the annual interest rate (decimal)
+  - \( n \) = the number of times that interest is compounded per year
+  - \( t \) = the number of years the money is invested for
+
+### Investing in Stocks:
+- **Research**: Always do thorough research or consider consulting with a financial advisor before purchasing stocks. Understand the business and market trends.
+- **Diversification**: Don’t put all your eggs in one basket. Diversifying your investments can help minimize risks.
+- **Long-term Perspective**: Consider investing for the long term to really take advantage of compound interest. The stock market can be volatile in the short term.
+- **Investment Accounts**: Look into opening a tax-advantaged account like a Roth IRA or 401(k) if you're investing for retirement, as these can further enhance your compound growth.
+- **Regular Contributions**: Consider dollar-cost averaging—investing a fixed amount regularly to reduce the impact of market volatility.
+
+### Additional Investment Strategies:
+- **Dividend Stocks**: Look for stocks that pay dividends, as these can be reinvested to capitalize on the power of compounding.
+- **ETFs and Index Funds**: These funds can be excellent for beginners as they provide instant diversification and typically have lower fees compared to actively managed funds.
+
+### Mindset and Habits:
+- **Be Patient**: Compounding takes time, so be patient with your investments. Significant growth often requires a long timeframe.
+- **Stay Informed**: Keep learning about market trends, new investment vehicles, and economic indicators to refine your strategy.
+- **Review Regularly**: Keep track of your investments regularly but avoid knee-jerk reactions to market fluctuations.
+
+### Final Thoughts:
+- **Set Clear Goals**: Before you start investing, it’s helpful to define what you’re investing for—be it retirement, purchasing a home, or another specific financial goal.
+- **Risk Tolerance**: Assess your risk tolerance before making investments. Stocks can provide great returns, but they can also carry greater risks.
+
+By focusing on these areas, you'll be well on your way to making informed investment decisions. Happy investing! If you have any specific questions or need further clarification on anything, feel free to ask.
+
+=== TEST 3==
+[INFO] Extracting keyword via Function Calling...
+[INFO] Keyword extracted = travel
+Your response is clear and expresses your travel concerns well. To enhance clarity and politeness, you might consider specifying the aspects of customs and immigration that confuse you, as this will help others provide targeted advice. Additionally, mentioning specific areas you’d like to improve—such as vocabulary or phrasing related to directions and hotel interactions—could guide your learning process.
+
+Here’s a refined version:
+
+"When I travel to Europe, I sometimes feel confused at customs and immigration procedures. I would like to improve my English skills so I can confidently ask for directions and communicate with hotel staff. Any tips on vocabulary or common phrases that would be useful in these situations would be greatly appreciated!"
+
+This version maintains your original message while incorporating a more polite tone and a request for specific guidance, making it easier for others to assist you.
+"""
