@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{% static 'app/css/select_topic.css' %}" />
 {% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'app/js/handle_click_topic_selected.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="select-topic-container">
     <div class="select-topic-header">
@@ -16,33 +20,33 @@
     </div>
     <div class="select-topic-content">
         <div class="left">
-            <div class="select-topic-item">
+            <div class="select-topic-item" data-topic="daily">
                 <h3>Daily Conversation</h3>
                 <p>Daily communication topics such as communication and ...</p>
             </div>
-            <div class="select-topic-item">
+            <div class="select-topic-item" data-topic="travel">
                 <h3>Travel</h3>
                 <p>Practice speaking in travel situations</p>
             </div>
-            <div class="select-topic-item">
+            <div class="select-topic-item" data-topic="job">
                 <h3>Job Interview</h3>
                 <p>Practice real-time life interview dialogue with AI</p>
             </div>
-            <div class="select-topic-item">
+            <div class="select-topic-item" data-topic="technology">
                 <h3>Technology</h3>
                 <p>Discuss the latest technology trends</p>
             </div>
-            <div class="select-topic-item">
+            <div class="select-topic-item" data-topic="free">
                 <h3>Free Talk</h3>
                 <p>Talk about any topic, you open first</p>
             </div>
-            <div class="select-topic-item">
+            <div class="select-topic-item disable">
                 <h3>More topics comming soon</h3>
                 <p>More practical topcis in the future</p>
             </div>
         </div>
         <div class="right">
-            <button>ICON here</button>
+            <button id="start-btn">ICON here</button>
             <p>Click to "Start practice"</p>
         </div>
     </div>
