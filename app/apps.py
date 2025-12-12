@@ -17,5 +17,6 @@ class LearningAppConfig(AppConfig):
             for automatically generated model primary keys.
         name (str): The full Python path to the application.
     """
+
     default_auto_field = "django.db.models.BigAutoField"
     name = "app"
