@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir black isort flake8 mypy pylance django-stubs
 
 COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip
