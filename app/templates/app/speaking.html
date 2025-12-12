@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Speaking - AI Communication{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/speaking.css' %}" />
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'app/js/handle_click_speaking_button.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="speaking-container">
+    <div class="speaking-header">
+        <h2>Speaking</h2>
+        <p>Practice your speaking skills with AI by recording your voice and receiving real-time feedback.</p>
+    </div>
+    <div class="speaking-content">
+        <div class="speaking-content-left">
+            <button class="btn-primary-speaking" id="speakingButton">
+                🎤 Speak
+            </button>
+            <p>Click button to speak</p>
+        </div>
+        <div class="speaking-content-right">Information translate...</div>
+    </div>
+</div>
+{% endblock %}

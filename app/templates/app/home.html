@@ -2,15 +2,26 @@
 
 {% block title %}Home - AI Communication{% endblock %}
 
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/home.css' %}" />
+{% endblock %}
+
 {% block content %}
-<div class="home-card">
-    <h2>Welcome to Your Personalized English Learning Path!</h2>
+<div class="home-content">
+    <div class="home-card">
+        <h2>Speech Practice <span style="color: #EBD5AB">with</span> AI</h2>
 
-    <p>
-        Improve your English through a tailored learning journey.
-        Start with recommended lessons, interactive practice, and progress tracking.
-    </p>
+        <p>
+            Improve your English through a tailored learning journey.
+            Start with recommended lessons, interactive practice, and progress tracking.
+        </p>
 
-    <button class="btn-primary">Start Learning</a>
+        <button class="btn-primary" onclick="window.location.href='/select_topic'">Start Learning</button>
+    </div>
+    <div class="home-image">
+        <img src="{% static 'app/images/home-image.png' %}" alt="Home image">
+    </div>
 </div>
 {% endblock %}
