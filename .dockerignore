@@ -17,3 +17,12 @@ env/
 .devcontainer/
 .idea/
 .DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Dev tools config
+pyproject.toml
+.flake8
+README.md

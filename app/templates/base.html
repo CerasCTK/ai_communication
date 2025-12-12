@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}AI Communication{% endblock %}</title>
+
+        {% load static %}
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'app/favicon/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'app/favicon/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'app/favicon/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'app/favicon/site.webmanifest' %}">
+
+        <link rel="stylesheet" href="{% static 'app/css/normalize.css' %}" />
+        <link rel="stylesheet" href="{% static 'app/css/global.css' %}" />
+        <link rel="stylesheet" href="{% static 'app/css/base.css' %}" />
+
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <div class="header-left">
+                <img src="{% static 'app/images/logo.png' %}" alt="AI Communication's logo" draggable="false" />
+                <span class="header-left__title">AI Communication</span>
+            </div>
+            <nav class="header-right">
+                <a href="/#">Home</a>
+                <a href="/#features">Features</a>
+                <a href="/#about-us">About Us</a>
+            </nav>
+        </header>
+        <main class="main-container">
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+            © 2025 AI Communication
+        </footer>
+
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>
