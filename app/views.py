@@ -1,8 +1,3 @@
-from django.http import HttpResponse, HttpRequest
+from django.shortcuts import render
 
-
-def home(_request: HttpRequest) -> HttpResponse:
-    """
-    Handle requests to the home page
-    """
-    return HttpResponse("Hello world!")
+# Create your views here.
