@@ -1,6 +1,0 @@
-black==25.11.0
-isort==7.0.0
-flake8==7.3.0
-mypy==1.19.0
-django-stubs==5.2.8
-pylint==4.0.4
