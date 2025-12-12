@@ -113,3 +113,30 @@
     font-weight: 600;
     white-space: nowrap;
 }
+
+#start-btn {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+
+#start-btn .start-icon {
+    width: 120px;
+    height: 120px;
+    object-fit: cover; 
+    border-radius: 50%;
+}
+
+#start-btn:hover {
+  box-shadow: 0 6px 14px rgba(31,111,235,0.08);
+  transform: translateY(-1px);
+}
