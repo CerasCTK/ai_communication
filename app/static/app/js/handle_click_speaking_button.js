@@ -35,11 +35,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       workletNode = new AudioWorkletNode(audioContext, "recorder-processor");
 
-      workletNode.port.onmessage = (event) => {
-        const chunk = event.data;
-        const pcm16 = float32ToPCM16(chunk);
-        ws.send(pcm16);
-      };
+    workletNode.port.onmessage = (event) => {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+      const chunk = event.data;
+      const pcm16 = float32ToPCM16(chunk);
+      console.log("pcm16", pcm16)
+      ws.send(pcm16);
+    };
 
       source.connect(workletNode);
       console.log("Recording started");
@@ -57,7 +60,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       mediaStream = null;
     }
 
-    if (ws) ws.close();
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.close();
+    }
+    ws = null;
   }
 
   function float32ToPCM16(float32Array) {

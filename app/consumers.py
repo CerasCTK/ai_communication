@@ -1,62 +1,30 @@
-"""
-WebSocket consumer module for handling real-time audio communication.
-
-This module defines the AudioConsumer class, which manages WebSocket events
-such as connection establishment, receiving messages, and handling disconnections.
-"""
-
+import numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 from app.services.whisper import Whisper
 
-whisper = Whisper(model_name="medium.en", device="cuda")
-
+whisper = Whisper(model_name="medium.en", device="")
 
 class AudioConsumer(AsyncWebsocketConsumer):
-    """
-    Asynchronous WebSocket consumer for processing audio and text messages.
-
-    This consumer:
-    - Accepts incoming WebSocket connections.
-    - Sends an initial confirmation message.
-    - Echoes back received text or binary data.
-    """
-
-    async def connect(self) -> None:
-        """
-        Handle a new WebSocket connection request.
-
-        Upon connection:
-            - The connection is accepted.
-            - A confirmation message is sent to the client.
-        """
+    async def connect(self):
         await self.accept()
+        self.audio_buffer = bytes()   # buffer riêng cho từng client
         print("Client connected")
-        await self.send(text_data="Connected OK!")
 
-    async def receive(
-        self, text_data: str | None = None, bytes_data: bytes | None = None
-    ) -> None:
-        """
-        Handle incoming WebSocket messages.
-
-        """
-        print("Haa")
-        # Receive PCM bytes from client
+    async def receive(self, text_data=None, bytes_data=None):
         if bytes_data:
-            # Call your transcribe() directly
+            self.audio_buffer += bytes_data
 
-            text = whisper.transcribe(bytes_data)
-            print("Transcribed:", text)
+            # mỗi 0.5s  = 16000Hz * 2 bytes * 0.5s = 16000 bytes
+            if len(self.audio_buffer) >= 16000 * 2:
+                pcm16 = np.frombuffer(self.audio_buffer, dtype=np.int16).astype(np.float32)
+                pcm16 = pcm16 / 32768  # chuẩn hóa [-1;1]
 
-            # Send back to browser
-            await self.send(text_data=text)
+                text = whisper.transcribe(pcm16)
+                print("Transcribed:", text)
 
-    async def disconnect(self, code: int) -> None:
-        """
-        Handle WebSocket disconnection.
+                await self.send(text_data=text)
 
-        """
-        whisper.close()
-        print("Client disconnected")
+                self.audio_buffer = bytes()  # flush
+
+    async def disconnect(self, code):
         print("Client disconnected")
