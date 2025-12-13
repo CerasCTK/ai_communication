@@ -3,9 +3,10 @@ import webrtcvad
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from app.services.whisper import Whisper
+from app.services.open_ai import AIUtilityClient
 
 # Initialize Whisper once (shared across clients)
-whisper = Whisper(model_name="medium.en", device="cuda")
+whisper = Whisper(model_name="medium.en", device="")
 
 SAMPLE_RATE = 16000
 BUFFER_DURATION_SECS = 3  # accumulate 3 seconds of speech before transcribing
@@ -13,11 +14,17 @@ VAD_MODE = 2  # 0=least aggressive, 3=most aggressive
 OVERLAP_SECS = 0.5  # keep last 0.5s to preserve short words
 RMS_THRESHOLD = 500  # adjust based on microphone input
 
+API_KEY = os.environ.get("OPENAI_API_KEY")  # bảo mật hơn
+BASE_URL = "https://aiportalapi.stu-platform.live/jpe"
+MODEL_NAME = "gpt-4o-mini"
 
 class AudioConsumer(AsyncWebsocketConsumer):
     async def connect(self) -> None:
         await self.accept()
         self.audio_buffer = b""  # per-client buffer
+        self.transcribed_texts = []  # list to store texts
+        self.final_text = []
+        ai_client = AIUtilityClient(API_KEY, BASE_URL, MODEL_NAME)
         self.vad = webrtcvad.Vad()
         self.vad.set_mode(VAD_MODE)
         print("Client connected")
@@ -54,6 +61,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
                 if text.strip():
                     print("Transcribed:", text)
+                    self.transcribed_texts.append(text) #collect text
                     await self.send(text_data=text)
 
                 # Keep last 0.5s for overlap to catch short words
@@ -61,4 +69,21 @@ class AudioConsumer(AsyncWebsocketConsumer):
                 self.audio_buffer = self.audio_buffer[-overlap_bytes:]
 
     async def disconnect(self, code):
+        self.final_text = " ".join(self.transcribed_texts)
         print("Client disconnected")
+
+    async def get_feedback(self):
+        try:
+            feedback = self.ai_client.generate_feedback(self.final_text, topic="custom_topic")
+            await self.send(text_data=f"[AI Feedback]: {feedback}")
+            print(f"[AI Feedback]: {feedback}")
+        except Exception as e:
+            print("Error calling OpenAI:", e)
+            await self.send(text_data="[AI Feedback]: Error generating feedback")
+            print("[AI Feedback]: Error generating feedback")
+            
+
+
+
+
+
