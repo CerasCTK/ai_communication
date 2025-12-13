@@ -18,7 +18,6 @@ class TestOpenAI(SimpleTestCase):
 
     # -------------------------------------------------
     def test_custom_topic_technology(self):
-        print("\n=== TEST 1: Technology ===")
         text = "AI is growing very fast and changing our future rapidly."
 
         result = self.ai.generate_feedback(text, "custom_topic")
@@ -29,7 +28,6 @@ class TestOpenAI(SimpleTestCase):
 
     # -------------------------------------------------
     def test_custom_topic_finance(self):
-        print("\n=== TEST 2: Finance ===")
         text = "I want to invest money using compound interest and buy some stocks."
 
         result = self.ai.generate_feedback(text, "custom_topic")
@@ -40,7 +38,6 @@ class TestOpenAI(SimpleTestCase):
 
     # -------------------------------------------------
     def test_custom_topic_travel(self):
-        print("\n=== TEST 3: Travel ===")
         text = (
             "When I travel to Europe, I often get confused at customs and immigration. "
             "I want to improve my English so I can ask for directions and talk to hotel staff more confidently."  # noqa: E501
