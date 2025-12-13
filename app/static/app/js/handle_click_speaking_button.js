@@ -9,6 +9,7 @@ let workletLoaded = false;
 
 const recordBtn = document.getElementById("speakingButton");
 const translationBox = document.getElementById("translationBox");
+const feedbackSection = document.getElementById("feedbackSection");
 
 // Button content
 const buttonContentWhenNotSpeaking = recordBtn.textContent;
