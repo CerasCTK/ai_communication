@@ -8,6 +8,7 @@ class TestOpenAI(SimpleTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
+        
         cls.API_KEY = "sk-YfSO3RgAtWp8-SBGwXva1w"
         cls.BASE_URL = "https://aiportalapi.stu-platform.live/jpe"
         cls.MODEL_NAME = "gpt-4o-mini"

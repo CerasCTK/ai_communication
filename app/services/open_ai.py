@@ -1,4 +1,6 @@
+import os
 from openai import OpenAI
+from dotenv import load_dotenv
 from typing import Optional, List, Dict, Any
 import json
 
@@ -165,10 +167,16 @@ class AIUtilityClient:
 # -----------------------------------------------------------------
 
 if __name__ == "__main__":
-    API_KEY = "sk-YfSO3RgAtWp8-SBGwXva1w"
-    BASE_URL = "https://aiportalapi.stu-platform.live/jpe"
-    MODEL_NAME = "gpt-4o-mini"
+    
+    load_dotenv()
 
+    API_KEY = os.getenv("OPENAI_API_KEY")
+    BASE_URL = os.getenv("OPENAI_BASE_URL")
+    MODEL_NAME = os.getenv("OPENAI_MODEL")
+
+    if not API_KEY:
+        raise RuntimeError("OPENAI_API_KEY not found")
+        
     ai = AIUtilityClient(API_KEY, BASE_URL, MODEL_NAME)
 
     # TEST #1 — Should match technology
