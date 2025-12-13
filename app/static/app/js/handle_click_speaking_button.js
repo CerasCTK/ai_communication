@@ -1,27 +1,35 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const WS_URL = "ws://localhost:8000/ws/audio/";
-  let ws;
-  let audioContext;
-  let mediaStream;
-  let workletNode;
-  let workletLoaded = false;
-  console.log(workletLoaded);
+const WS_URL = "ws://localhost:8000/ws/audio/";
+let ws;
+let audioContext;
+let mediaStream;
+let workletNode;
+let workletLoaded = false;
 
-  const recordBtn = document.getElementById("speakingButton");
+const recordBtn = document.getElementById("speakingButton");
 
-  async function startRecording() {
-    ws = new WebSocket(WS_URL);
-    ws.binaryType = "arraybuffer";
+const buttonContentWhenNotSpeaking = recordBtn.textContent;
+const buttonContentWhenSpeaking = `
+  <div class="recording-text">
+    <span>●</span>
+    <span>●</span>
+    <span>●</span>
+    <span>●</span>
+  </div>
+`;
 
-    ws.onmessage = (e) => {
-      console.log("TRANSCRIBED:", e.data);
-    };
+async function startRecording() {
+  ws = new WebSocket(WS_URL);
+  ws.binaryType = "arraybuffer";
 
-    ws.onopen = async () => {
-      console.log("WS connected");
+  ws.onmessage = (e) => {
+    console.log("TRANSCRIBED:", e.data);
+  };
 
-      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioContext = new AudioContext({ sampleRate: 48000 });
+  ws.onopen = async () => {
+    console.log("WS connected");
+
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioContext = new AudioContext({ sampleRate: 48000 });
 
     if (!workletLoaded) {
       await audioContext.audioWorklet.addModule(
@@ -31,58 +39,59 @@ document.addEventListener("DOMContentLoaded", async () => {
       workletLoaded = true;
     }
 
-      const source = audioContext.createMediaStreamSource(mediaStream);
+    const source = audioContext.createMediaStreamSource(mediaStream);
 
-      workletNode = new AudioWorkletNode(audioContext, "recorder-processor");
+    workletNode = new AudioWorkletNode(audioContext, "recorder-processor");
 
     workletNode.port.onmessage = (event) => {
       if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
       const chunk = event.data;
       const pcm16 = float32ToPCM16(chunk);
-      console.log("pcm16", pcm16)
+      console.log("pcm16", pcm16);
       ws.send(pcm16);
     };
 
-      source.connect(workletNode);
-      console.log("Recording started");
-    };
+    source.connect(workletNode);
+    console.log("Recording started");
+  };
+}
+
+async function stopRecording() {
+  if (workletNode) {
+    workletNode.disconnect();
+    workletNode = null;
   }
 
-  async function stopRecording() {
-    if (workletNode) {
-      workletNode.disconnect();
-      workletNode = null;
-    }
-
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(t => t.stop());
-      mediaStream = null;
-    }
-
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.close();
-    }
-    ws = null;
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((t) => t.stop());
+    mediaStream = null;
   }
 
-  function float32ToPCM16(float32Array) {
-    const buffer = new ArrayBuffer(float32Array.length * 2);
-    const view = new DataView(buffer);
-    for (let i = 0; i < float32Array.length; i++) {
-      let s = Math.max(-1, Math.min(1, float32Array[i]));
-      view.setInt16(i * 2, s * 0x7fff, true);
-    }
-    return buffer;
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.close();
   }
+  ws = null;
+}
 
-  recordBtn.addEventListener("click", () => {
-    if (!recordBtn.classList.contains("recording")) {
-      recordBtn.classList.add("recording");
-      startRecording();
-    } else {
-      recordBtn.classList.remove("recording");
-      stopRecording();
-    }
-  });
+function float32ToPCM16(float32Array) {
+  const buffer = new ArrayBuffer(float32Array.length * 2);
+  const view = new DataView(buffer);
+  for (let i = 0; i < float32Array.length; i++) {
+    let s = Math.max(-1, Math.min(1, float32Array[i]));
+    view.setInt16(i * 2, s * 0x7fff, true);
+  }
+  return buffer;
+}
+
+recordBtn.addEventListener("click", () => {
+  if (!recordBtn.classList.contains("recording")) {
+    recordBtn.classList.add("recording");
+    recordBtn.innerHTML = buttonContentWhenSpeaking;
+    startRecording();
+  } else {
+    recordBtn.classList.remove("recording");
+    recordBtn.innerHTML = buttonContentWhenNotSpeaking;
+    stopRecording();
+  }
 });

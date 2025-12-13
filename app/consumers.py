@@ -1,6 +1,7 @@
 import numpy as np
 import webrtcvad
 from channels.generic.websocket import AsyncWebsocketConsumer
+
 from app.services.whisper import Whisper
 
 # Initialize Whisper once (shared across clients)
@@ -14,7 +15,7 @@ RMS_THRESHOLD = 500  # adjust based on microphone input
 
 
 class AudioConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
+    async def connect(self) -> None:
         await self.accept()
         self.audio_buffer = b""  # per-client buffer
         self.vad = webrtcvad.Vad()
@@ -27,7 +28,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
         bytes_per_frame = int(SAMPLE_RATE * 2 * frame_duration_ms / 1000)  # 16-bit PCM
 
         for i in range(0, len(audio_bytes), bytes_per_frame):
-            frame = audio_bytes[i:i + bytes_per_frame]
+            frame = audio_bytes[i : i + bytes_per_frame]
             if len(frame) != bytes_per_frame:
                 continue
 
@@ -39,7 +40,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
                     return True
         return False
 
-    async def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data=None, bytes_data=None) -> None:
         if bytes_data:
             # Append only if chunk contains real speech
             if self._is_speech(bytes_data):
