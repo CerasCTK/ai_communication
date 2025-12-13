@@ -5,8 +5,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from app.services.whisper import Whisper
 from app.services.open_ai import AIUtilityClient
 
+import os
 # Initialize Whisper once (shared across clients)
-whisper = Whisper(model_name="medium.en", device="")
+whisper = Whisper(model_name="medium.en", device="cuda")
 
 SAMPLE_RATE = 16000
 BUFFER_DURATION_SECS = 3  # accumulate 3 seconds of speech before transcribing
@@ -14,7 +15,7 @@ VAD_MODE = 2  # 0=least aggressive, 3=most aggressive
 OVERLAP_SECS = 0.5  # keep last 0.5s to preserve short words
 RMS_THRESHOLD = 500  # adjust based on microphone input
 
-API_KEY = os.environ.get("OPENAI_API_KEY")  # bảo mật hơn
+API_KEY = "sk-YfSO3RgAtWp8-SBGwXva1w"
 BASE_URL = "https://aiportalapi.stu-platform.live/jpe"
 MODEL_NAME = "gpt-4o-mini"
 
@@ -24,7 +25,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
         self.audio_buffer = b""  # per-client buffer
         self.transcribed_texts = []  # list to store texts
         self.final_text = []
-        ai_client = AIUtilityClient(API_KEY, BASE_URL, MODEL_NAME)
+        self.ai_client = AIUtilityClient(API_KEY, BASE_URL, MODEL_NAME)
         self.vad = webrtcvad.Vad()
         self.vad.set_mode(VAD_MODE)
         print("Client connected")
@@ -70,6 +71,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         self.final_text = " ".join(self.transcribed_texts)
+        await self.get_feedback()
         print("Client disconnected")
 
     async def get_feedback(self):
