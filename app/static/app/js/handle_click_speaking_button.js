@@ -1,123 +1,82 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const speakingTopicElement = document.querySelector(".speaking-topic");
-  if (!speakingTopicElement) return;
-
-  const savedTopic = localStorage.getItem("selected_topic_desc");
-  speakingTopicElement.textContent = savedTopic || "No topic selected";
-
-  const speakingButtonElement = document.getElementById("speakingButton");
-  if (!speakingButtonElement) return;
-
-  const buttonContentWhenNotSpeaking = speakingButtonElement.textContent;
-  const buttonContentWhenSpeaking = `
-    <div class="recording-text">
-      <span>●</span>
-      <span>●</span>
-      <span>●</span>
-      <span>●</span>
-    </div>
-  `;
-
+document.addEventListener("DOMContentLoaded", async () => {
   const WS_URL = "ws://localhost:8000/ws/audio/";
   let ws;
-  let mediaStream;
   let audioContext;
-  let processor;
-  let source;
+  let mediaStream;
+  let workletNode;
+  let workletLoaded = false;
+  console.log(workletLoaded);
 
-  const resampleTo16k = (buffer, inputSampleRate) => {
-    const targetSampleRate = 16000;
-    const ratio = inputSampleRate / targetSampleRate;
-    const newLength = Math.round(buffer.length / ratio);
-    const resampled = new Float32Array(newLength);
+  const recordBtn = document.getElementById("speakingButton");
 
-    for (let i = 0; i < newLength; i++) {
-      const index = i * ratio;
-      const left = Math.floor(index);
-      const right = Math.ceil(index);
-      const frac = index - left;
-      const leftVal = buffer[left] || 0;
-      const rightVal = buffer[right] || leftVal;
-      resampled[i] = leftVal + (rightVal - leftVal) * frac;
+  async function startRecording() {
+    ws = new WebSocket(WS_URL);
+    ws.binaryType = "arraybuffer";
+
+    ws.onmessage = (e) => {
+      console.log("TRANSCRIBED:", e.data);
+    };
+
+    ws.onopen = async () => {
+      console.log("WS connected");
+
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioContext = new AudioContext({ sampleRate: 48000 });
+
+    if (!workletLoaded) {
+      await audioContext.audioWorklet.addModule(
+        "static/app/js/audio_worklet_processor.js"
+      );
+      console.log("Worket loaded");
+      workletLoaded = true;
     }
-    return resampled;
-  };
 
-  speakingButtonElement.addEventListener("click", async () => {
-    const isRecording = speakingButtonElement.classList.contains("recording");
+      const source = audioContext.createMediaStreamSource(mediaStream);
 
-    if (!isRecording) {
-      speakingButtonElement.classList.add("recording");
-      speakingButtonElement.innerHTML = buttonContentWhenSpeaking;
+      workletNode = new AudioWorkletNode(audioContext, "recorder-processor");
 
-      ws = new WebSocket(WS_URL);
-      ws.binaryType = "arraybuffer";
-
-      ws.onopen = () => {
-        console.log("✅ WebSocket connected");
-
-        navigator.mediaDevices
-          .getUserMedia({ audio: true })
-          .then((stream) => {
-            mediaStream = stream;
-
-            audioContext = new (window.AudioContext ||
-              window.webkitAudioContext)();
-            console.log("Mic samplerate = ", audioContext.sampleRate);
-
-            source = audioContext.createMediaStreamSource(stream);
-
-            processor = audioContext.createScriptProcessor(1024, 1, 1);
-
-            source.connect(processor);
-            processor.connect(audioContext.destination);
-
-            processor.onaudioprocess = (e) => {
-              if (!ws || ws.readyState !== WebSocket.OPEN) return;
-
-              const inputData = e.inputBuffer.getChannelData(0);
-
-              const resampled = resampleTo16k(
-                inputData,
-                audioContext.sampleRate
-              );
-
-              const buffer = new ArrayBuffer(resampled.length * 2);
-              const view = new DataView(buffer);
-
-              for (let i = 0; i < resampled.length; i++) {
-                let s = Math.max(-1, Math.min(1, resampled[i]));
-                view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-              }
-
-              console.log("Buffer: ", buffer);
-              ws.send(buffer);
-            };
-          })
-          .catch((err) => {
-            console.error("Microphone error:", err);
-          });
+      workletNode.port.onmessage = (event) => {
+        const chunk = event.data;
+        const pcm16 = float32ToPCM16(chunk);
+        ws.send(pcm16);
       };
 
-      ws.onclose = () => console.log("🔒 WebSocket closed");
-      ws.onerror = (err) => console.error("❌ WebSocket error:", err);
-    } else {
-      // Stop recording
-      speakingButtonElement.classList.remove("recording");
-      speakingButtonElement.innerHTML = buttonContentWhenNotSpeaking;
+      source.connect(workletNode);
+      console.log("Recording started");
+    };
+  }
 
-      if (processor) {
-        processor.disconnect();
-      }
-      if (audioContext) {
-        audioContext.close();
-      }
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-      }
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
+  async function stopRecording() {
+    if (workletNode) {
+      workletNode.disconnect();
+      workletNode = null;
+    }
+
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(t => t.stop());
+      mediaStream = null;
+    }
+
+    if (ws) ws.close();
+  }
+
+  function float32ToPCM16(float32Array) {
+    const buffer = new ArrayBuffer(float32Array.length * 2);
+    const view = new DataView(buffer);
+    for (let i = 0; i < float32Array.length; i++) {
+      let s = Math.max(-1, Math.min(1, float32Array[i]));
+      view.setInt16(i * 2, s * 0x7fff, true);
+    }
+    return buffer;
+  }
+
+  recordBtn.addEventListener("click", () => {
+    if (!recordBtn.classList.contains("recording")) {
+      recordBtn.classList.add("recording");
+      startRecording();
+    } else {
+      recordBtn.classList.remove("recording");
+      stopRecording();
     }
   });
 });
