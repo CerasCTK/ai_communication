@@ -1,4 +1,5 @@
 from django.test import SimpleTestCase
+
 from app.services.open_ai import AIUtilityClient
 
 
@@ -12,9 +13,7 @@ class TestOpenAI(SimpleTestCase):
         cls.MODEL_NAME = "gpt-4o-mini"
 
         cls.ai = AIUtilityClient(
-            api_key=cls.API_KEY,
-            base_url=cls.BASE_URL,
-            deployment_name=cls.MODEL_NAME
+            api_key=cls.API_KEY, base_url=cls.BASE_URL, deployment_name=cls.MODEL_NAME
         )
 
     # -------------------------------------------------
@@ -44,7 +43,7 @@ class TestOpenAI(SimpleTestCase):
         print("\n=== TEST 3: Travel ===")
         text = (
             "When I travel to Europe, I often get confused at customs and immigration. "
-            "I want to improve my English so I can ask for directions and talk to hotel staff more confidently."
+            "I want to improve my English so I can ask for directions and talk to hotel staff more confidently."  # noqa: E501
         )
 
         result = self.ai.generate_feedback(text, "custom_topic")
